@@ -1,0 +1,265 @@
+package projek.akhir;
+// FATHI AHMAD RAEHAN
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
+public class Program {
+    static ArrayList<String> namaP = new ArrayList<>();
+    static ArrayList<String> nmrP = new ArrayList<>();
+    static ArrayList<String> alamatP = new ArrayList<>();
+    static ArrayList<String> mobil = new ArrayList<>();
+    static ArrayList<Double> harga = new ArrayList<>();
+    static ArrayList<Double> durasi = new ArrayList<>();
+    static ArrayList<Double> totalBiaya = new ArrayList<>();
+    static boolean isRunning = true;
+    static BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+
+    static void showMenu() throws IOException {
+        System.out.println("\n============ MENU ============");
+        System.out.println("1. Isi Data");
+        System.out.println("2. Lihat Laporan");
+        System.out.println("3. Koreksi / Edit Data");
+        System.out.println("4. Hapus Data");
+        System.out.println("5. Cetak Struk");
+        System.out.println("6. Keluar");
+        System.out.print("PILIH MENU > ");
+        int Menu = Integer.parseInt(input.readLine());
+
+        switch (Menu) {
+            case 1:
+                insert(); break;
+            case 2:
+                laporan(); break;
+            case 3:
+                editData(); break;
+            case 4:
+                deleteData(); break;
+            case 5:
+                cetakStruk(); break;
+            case 6:
+                isRunning = false;
+                System.out.println("Program Selesai.");
+                break;
+            default: System.out.println("Pilihan tidak valid.");
+        }
+    }
+
+    static void alldata() {
+        System.out.println("========= SEMUA DATA =========");
+        if (namaP.isEmpty()) {
+            System.out.println("Belum ada data.");
+        } else {
+            for (int i = 0; i < namaP.size(); i++) {
+                System.out.printf(" %-1d. Nama: %-14s|| Alamat: %-11s|| No.HP: %-11s|| Mobil: %-23s|| Harga/hari: Rp. %-10.2f|| Durasi: %-3.0f hari|| Total Biaya: Rp. %-10.2f\n",
+                        i + 1, 
+                        namaP.get(i),
+                        alamatP.get(i),
+                        nmrP.get(i),
+                        mobil.get(i), 
+                        harga.get(i), 
+                        durasi.get(i),
+                        totalBiaya.get(i));
+            }
+        }
+    }
+
+    static void laporan() throws IOException {
+        System.out.println("\n===== LAPORAN RENTAL MOBIL =====");
+        System.out.println("====== RENTAL MOBIL 2024 ======");
+        if (namaP.isEmpty()) {
+            System.out.println("Belum ada data.");
+        } else {
+            int totalData = namaP.size();
+            double totalPendapatan = 0;
+            for (int i = 0; i < totalData; i++) {
+                totalPendapatan += totalBiaya.get(i);
+            }
+            alldata();
+            System.out.printf("\nTOTAL PENDAPATAN: Rp. %-10.2f\n", totalPendapatan);
+        }
+    }
+
+    static void insert() throws IOException {
+        boolean ulang = true;
+        while (ulang) {
+            System.out.println("======== INPUT DATA ========");
+            System.out.print("Masukkan Nama   : ");
+            String nama = input.readLine();
+            System.out.print("Masukkan Alamat : ");
+            String alamat = input.readLine();
+            System.out.print("Masukkan No. HP : ");
+            String nmr = input.readLine();
+            System.out.println("Pilihan Mobil yang Tersedia:\n"
+                    + "1. Toyota Avanza\n"
+                    + "2. Honda Brio\n"
+                    + "3. Suzuki Ertiga\n"
+                    + "4. Mitsubishi Pajero\n"
+                    + "5. Toyota Fortuner\n"
+                    + "6. Honda CR-V\n"
+                    + "7. Daihatsu Xenia");
+            System.out.print("Pilih Mobil (1-7) : ");
+            int kode = Integer.parseInt(input.readLine());
+            String namaMobil = mobil(kode);
+            double hargaHarian = harga(kode);
+
+            System.out.println("Nama Mobil        : " + namaMobil);
+            System.out.printf("Harga per Hari    : Rp.%-10.2f\n", hargaHarian);
+            System.out.print("Masukkan Durasi (hari) : ");
+            double durasiHari = Double.parseDouble(input.readLine());
+            double total = hargaHarian * durasiHari;
+            System.out.printf("Total Biaya       : Rp.%-10.2f\n", total);
+
+            // Menyimpan data ke ArrayList
+            namaP.add(nama);
+            alamatP.add(alamat);
+            nmrP.add(nmr);
+            mobil.add(namaMobil);
+            harga.add(hargaHarian);
+            durasi.add(durasiHari);
+            totalBiaya.add(total);
+
+            System.out.println("Data berhasil ditambahkan.");
+            printStruk(namaP.size() - 1);
+
+            System.out.print("Tambah Data lagi? [y/t]: ");
+            String choice = input.readLine().toLowerCase();
+            if (!choice.equals("y")) {
+                ulang = false;
+            }
+        }
+    }
+
+    static void editData() throws IOException {
+        boolean ulang = true;
+        while (ulang) {
+            alldata();
+            System.out.print("Pilih nomor data yang ingin di-edit: ");
+            int index = Integer.parseInt(input.readLine()) - 1;
+
+            if (index >= 0 && index < namaP.size()) {
+                System.out.print("Masukkan Nama Baru  : ");
+                namaP.set(index, input.readLine());
+                System.out.print("Masukkan Alamat Baru: ");
+                alamatP.set(index, input.readLine());
+                System.out.print("Masukkan No. HP Baru: ");
+                nmrP.set(index, input.readLine());
+                System.out.println("Pilih Mobil yang ingin disewa:\n"
+                        + "1. Toyota Avanza\n"
+                        + "2. Honda Brio\n"
+                        + "3. Suzuki Ertiga\n"
+                        + "4. Mitsubishi Pajero\n"
+                        + "5. Toyota Fortuner\n"
+                        + "6. Honda CR-V\n"
+                        + "7. Daihatsu Xenia");
+                System.out.print("Pilih Mobil Baru (1-7): ");
+                int kode = Integer.parseInt(input.readLine());
+                mobil.set(index, mobil(kode));
+                harga.set(index, harga(kode));
+
+                System.out.print("Masukkan Durasi (hari) Baru : ");
+                double durasiHari = Double.parseDouble(input.readLine());
+                durasi.set(index, durasiHari);
+                totalBiaya.set(index, harga.get(index) * durasiHari);
+
+                System.out.println("Data berhasil di-edit.");
+            } else {
+                System.out.println("Data tidak ditemukan.");
+            }
+            System.out.print("Edit Data lagi? [y/t]: ");
+            String choice = input.readLine().toLowerCase();
+            if (!choice.equals("y")) {
+                ulang = false;
+            }
+        }
+    }
+
+    static void deleteData() throws IOException {
+        boolean ulang = true;
+        while (ulang) {
+            alldata();
+            System.out.print("Pilih nomor data yang ingin dihapus: ");
+            int index = Integer.parseInt(input.readLine()) - 1;
+
+            if (index >= 0 && index < namaP.size()) {
+                namaP.remove(index);
+                alamatP.remove(index);
+                nmrP.remove(index);
+                mobil.remove(index);
+                harga.remove(index);
+                durasi.remove(index);
+                totalBiaya.remove(index);
+                System.out.println("Data berhasil dihapus.");
+            } else {
+                System.out.println("Data tidak ditemukan.");
+            }
+            System.out.print("Hapus Data lagi? [y/t]: ");
+            String choice = input.readLine().toLowerCase();
+            if (!choice.equals("y")) {
+                ulang = false;
+            }
+        }
+    }
+
+    static void cetakStruk() throws IOException {
+        alldata();
+        System.out.print("Pilih nomor data untuk mencetak struk: ");
+        int index = Integer.parseInt(input.readLine()) - 1;
+
+        if (index >= 0 && index < namaP.size()) {
+            printStruk(index);
+        } else {
+            System.out.println("Data tidak ditemukan.");
+        }
+    }
+
+    static double harga(int kode) {
+        switch (kode) {
+            case 1: return 300000;
+            case 2: return 250000;
+            case 3: return 280000;
+            case 4: return 500000;
+            case 5: return 450000;
+            case 6: return 400000;
+            case 7: return 270000;
+            default: return 0;
+        }
+    }
+
+    static String mobil(int kode) {
+        switch (kode) {
+            case 1: return "Toyota Avanza";
+            case 2: return "Honda Brio";
+            case 3: return "Suzuki Ertiga";
+            case 4: return "Mitsubishi Pajero";
+            case 5: return "Toyota Fortuner";
+            case 6: return "Honda CR-V";
+            case 7: return "Daihatsu Xenia";
+            default: return "Tidak diketahui";
+        }
+    }
+
+    static void printStruk(int index) {
+        System.out.println("\n========== STRUK RENTAL MOBIL ==========");
+        System.out.println("Nama Penyewa   : " + namaP.get(index));
+        System.out.println("Alamat         : " + alamatP.get(index));
+        System.out.println("No. HP         : " + nmrP.get(index));
+        System.out.println("Mobil          : " + mobil.get(index));
+        System.out.printf("Harga/hari     : Rp. %-10.2f\n", harga.get(index));
+        System.out.printf("Durasi Sewa    : %-3.0f hari\n", durasi.get(index));
+        System.out.printf("Total Biaya    : Rp. %-10.2f\n", totalBiaya.get(index));
+        System.out.println("========================================");
+        System.out.println("Terima kasih telah menggunakan jasa kami!");
+    }
+
+    public static void main(String[] args) throws IOException {
+        System.out.println("==============================");
+        System.out.println("======== RENTAL MOBIL ========");
+        System.out.println("== 0069-FATHI_AHMAD_RAEHAN ===");
+        System.out.println("==============================");
+        do {
+            showMenu();
+        } while (isRunning);
+    }
+}
